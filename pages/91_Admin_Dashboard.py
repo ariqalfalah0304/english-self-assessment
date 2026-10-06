@@ -176,7 +176,7 @@ st.markdown("<br><hr>", unsafe_allow_html=True)
 # --------------------------------------------------------
 st.markdown("### Administrative Quick Actions")
 
-b_qbank, b_analytics, b_import, b_users, b_results, b_logout = st.columns(6)
+b_qbank, b_analytics, b_import, b_users, b_results, b_settings, b_logout = st.columns(7)
 
 with b_qbank:
     if st.button("📚 Question Bank", use_container_width=True, type="primary"):
@@ -197,6 +197,10 @@ with b_users:
 with b_results:
     if st.button("📈 Results", use_container_width=True):
         st.switch_page("pages/96_Admin_Results.py")
+
+with b_settings:
+    if st.button("⚙️ Settings", use_container_width=True):
+        st.switch_page("pages/97_Admin_Settings.py")
 
 with b_logout:
     if st.button("🚪 Logout", use_container_width=True):

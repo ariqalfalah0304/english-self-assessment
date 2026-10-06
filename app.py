@@ -72,9 +72,10 @@ p_qbank = st.Page("pages/93_Admin_Question_Bank.py", title="Question Bank", icon
 p_import = st.Page("pages/94_Admin_Import.py", title="Import Questions", icon="📥")
 p_analytics = st.Page("pages/95_Admin_Analytics.py", title="Analytics", icon="📈")
 p_results = st.Page("pages/96_Admin_Results.py", title="Results", icon="📋")
+p_settings = st.Page("pages/97_Admin_Settings.py", title="Settings", icon="⚙️")
 
 user_nav = [p_home, p_identity, p_test_selection, p_quiz, p_result, p_history, p_login]
-admin_nav = [p_dashboard, p_users, p_qbank, p_import, p_analytics, p_results]
+admin_nav = [p_dashboard, p_users, p_qbank, p_import, p_analytics, p_results, p_settings]
 
 # -------------------------------------------------------------
 # 2. DYNAMIC NAVIGATION SELECTION
