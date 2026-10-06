@@ -13,7 +13,12 @@ Protected by require_admin_auth().
 import streamlit as st
 import pandas as pd
 from config.settings import APP_NAME
-from services.admin_service import require_admin_auth, logout_admin_session
+from services.admin_service import (
+    require_admin_auth,
+    logout_admin_session,
+    get_active_admin_session,
+    update_admin_account_credentials,
+)
 from services.admin_dashboard_service import (
     fetch_dashboard_summary,
     build_category_distribution_chart,
@@ -197,3 +202,57 @@ with b_logout:
     if st.button("🚪 Logout", use_container_width=True):
         logout_admin_session()
         st.switch_page("pages/90_Admin_Login.py")
+
+st.markdown("<br><hr>", unsafe_allow_html=True)
+
+# --------------------------------------------------------
+# 5. ADMIN ACCOUNT SETTINGS (CHANGE USERNAME & PASSWORD)
+# --------------------------------------------------------
+admin_session = get_active_admin_session()
+if admin_session:
+    with st.expander("🔐 Pengaturan Akun: Ubah Username & Password Administrator", expanded=False):
+        st.markdown(
+            f"Perbarui kredensial untuk akun yang sedang aktif: **`{admin_session.get('username')}`** "
+            f"*(Peran: {admin_session.get('role', 'admin').upper()})*"
+        )
+        with st.form("form_change_admin_credentials_dash"):
+            col_u1, col_u2 = st.columns(2)
+            with col_u1:
+                change_new_user = st.text_input(
+                    "Username Baru *",
+                    value=admin_session.get("username", "admin"),
+                    help="Minimal 3 karakter alfanumerik.",
+                )
+                change_cur_pass = st.text_input(
+                    "Password Saat Ini *",
+                    type="password",
+                    help="Wajib memasukkan password saat ini untuk keamanan.",
+                )
+            with col_u2:
+                change_new_pass = st.text_input(
+                    "Password Baru (Opsional)",
+                    type="password",
+                    help="Kosongkan jika hanya ingin mengubah username.",
+                )
+                change_confirm_pass = st.text_input(
+                    "Konfirmasi Password Baru",
+                    type="password",
+                    help="Ulangi password baru di atas jika mengubah password.",
+                )
+
+            submit_change_dash = st.form_submit_button("💾 Simpan Perubahan Kredensial", type="primary")
+
+            if submit_change_dash:
+                up_ok, up_msg = update_admin_account_credentials(
+                    admin_id=admin_session["id"],
+                    current_password=change_cur_pass,
+                    new_username=change_new_user,
+                    new_password=change_new_pass if change_new_pass.strip() else None,
+                    confirm_password=change_confirm_pass if change_confirm_pass.strip() else None,
+                )
+                if up_ok:
+                    st.success(f"🎉 Berhasil diperbarui: {up_msg}")
+                    st.toast("Kredensial berhasil diperbarui!", icon="✅")
+                    st.rerun()
+                else:
+                    st.error(f"❌ {up_msg}")
